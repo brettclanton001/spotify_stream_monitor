@@ -40,26 +40,22 @@ end
 
 RSpotify.authenticate(ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET'])
 
-artists = {}
-tracks = {}
+artists = []
+tracks = []
 
 playlist = RSpotify::Playlist.find_by_id(ENV['SPOTIFY_PLAYLIST_ID'])
 
 playlist.tracks.each do |track|
 
 	track.artists.each do |artist|
-		unless artists.key?(artist.id)
-			artists[artist.id] = {
-				popularity: artist.popularity
-			}
+		unless artists.include?(artist.id)
+			artists.append(artist.id)
 			record_spotify_data('artist', artist.id, artist.name, artist.popularity)
 		end
 	end
 
-	unless tracks.key?(track.id)
-		tracks[track.id] = {
-			popularity: track.popularity
-		}
+	unless tracks.include?(track.id)
+		tracks.append(track.id)
 		record_spotify_data('track', track.id, track.name, track.popularity)
 	end
 end
