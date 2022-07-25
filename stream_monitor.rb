@@ -9,11 +9,11 @@ require 'pg'
 	password: ENV['PG_PASSWORD']
 })
 
-def record_spotify_data(object_type, id, popularity)
+def record_spotify_data(object_type, id, object_name, popularity)
 
 	# data validation
 	raise Exception.new "invalid object_type" unless ['artist', 'track'].include?(object_type)
-	raise Exception.new "invalid id" unless id =~ /[A-Za-z0-9]{22}/
+	raise Exception.new "invalid object id" unless id =~ /[A-Za-z0-9]{22}/
 	raise Exception.new "invalid popularity" unless (0..100).include?(popularity)
 	
 	@conn.exec("
@@ -21,6 +21,7 @@ def record_spotify_data(object_type, id, popularity)
 			 uuid,
 			 external_object_type,
 			 external_object_id,
+			 external_object_name,
 			 popularity,
 			 created_at,
 			 updated_at
@@ -29,6 +30,7 @@ def record_spotify_data(object_type, id, popularity)
 			 GEN_RANDOM_UUID(),
 			 '#{object_type}',
 			 '#{id}',
+			 '#{object_name}',
 			 #{popularity},
 			 NOW(),
 			 NOW()
@@ -50,7 +52,7 @@ playlist.tracks.each do |track|
 			artists[artist.id] = {
 				popularity: artist.popularity
 			}
-			record_spotify_data('artist', artist.id, artist.popularity)
+			record_spotify_data('artist', artist.id, artist.name, artist.popularity)
 		end
 	end
 
@@ -58,6 +60,6 @@ playlist.tracks.each do |track|
 		tracks[track.id] = {
 			popularity: track.popularity
 		}
-		record_spotify_data('track', track.id, track.popularity)
+		record_spotify_data('track', track.id, track.name, track.popularity)
 	end
 end
