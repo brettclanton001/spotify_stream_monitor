@@ -8,13 +8,6 @@ Airbrake.configure do |c|
   c.project_key = ENV['AIRBRAKE_API_KEY']
 end
 
-# Test Production Airbrake
-begin
-  1/0
-rescue ZeroDivisionError => ex
-  Airbrake.notify(ex)
-end
-
 # Database Connection
 @conn = PG::Connection.new({
 	host: ENV['PG_HOST'],
