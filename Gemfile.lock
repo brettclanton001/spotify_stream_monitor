@@ -61,6 +61,7 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake-ruby
+  jwt
   pg
   rspotify
 

@@ -2,19 +2,34 @@ require 'rspotify'
 require 'pg'
 require 'airbrake-ruby'
 
+require_relative 'script_buddy.rb'
+include ScriptBuddy
+init_constants_from_env %w(
+  AIRBRAKE_PROJECT_ID
+  AIRBRAKE_API_KEY
+  PG_HOST
+  PG_PORT
+  PG_DB
+  PG_USER
+  PG_PASSWORD
+  SPOTIFY_CLIENT_ID
+  SPOTIFY_CLIENT_SECRET
+  SPOTIFY_PLAYLIST_ID
+)
+
 # Airbrake Error Monitoring
 Airbrake.configure do |c|
-  c.project_id = ENV['AIRBRAKE_PROJECT_ID']
-  c.project_key = ENV['AIRBRAKE_API_KEY']
+  c.project_id = AIRBRAKE_PROJECT_ID
+  c.project_key = AIRBRAKE_API_KEY
 end
 
 # Database Connection
 @conn = PG::Connection.new({
-  host: ENV['PG_HOST'],
-  port: ENV['PG_PORT'],
-  dbname: ENV['PG_DB'],
-  user: ENV['PG_USER'],
-  password: ENV['PG_PASSWORD']
+  host: PG_HOST,
+  port: PG_PORT,
+  dbname: PG_DB,
+  user: PG_USER,
+  password: PG_PASSWORD
 })
 
 def record_spotify_data(object_type, id, object_name, popularity)
@@ -46,12 +61,12 @@ def record_spotify_data(object_type, id, object_name, popularity)
   ")
 end
 
-RSpotify.authenticate(ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET'])
+RSpotify.authenticate(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
 
 artists = []
 tracks = []
 
-playlist = RSpotify::Playlist.find_by_id(ENV['SPOTIFY_PLAYLIST_ID'])
+playlist = RSpotify::Playlist.find_by_id(SPOTIFY_PLAYLIST_ID)
 
 playlist.tracks.each do |track|
 
