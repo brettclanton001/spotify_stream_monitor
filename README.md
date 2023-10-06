@@ -6,6 +6,16 @@ bundle exec ruby stream_monitor.rb
 
 I suggest asdf for ruby version management: https://asdf-vm.com/
 
+Connect to remote PQL Server via:
+```
+psql -h [HOSTNAME] -p 5432 -U [USERNAME] -W -d [DATABASENAME]
+```
+
+Issue heroku commands:
+```
+HEROKU_APP=spotify-stream-monitor heroku status
+```
+
 ---
 
 https://developer.spotify.com/documentation/web-api/reference/#/operations/get-track
